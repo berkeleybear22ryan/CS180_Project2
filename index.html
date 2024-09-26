@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing Report</title>
+    <style>
+        /* style for inline code like <code> */
+        code, .backtick-code {
+            font-family: Consolas, "Courier New", monospace;
+            background-color: #464646;
+            border: 0px solid #000000;
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 90%;
+        }
+
+        video {
+            max-width: 50%;
+            max-height: 100%;
+            flex: 1;
+        }
+
+        /* style specifically for backticked text */
+        .backtick-code::before, .backtick-code::after {
+            content: "`"; /* add backticks around the text */
+            color: #555; /*darker backtick color */
+        }
+
+        .box {
+            border: 1px solid white;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        body {
+            font-family: "Times New Roman", sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #050505;
+            color: #ababab;
+            font-size: 12px;
+        }
+
+        h1, h2, h3, h4 {
+            /*color: #333;*/
+        }
+
+        p {
+            text-align: justify;
+            margin-top: 0.5em;
+            margin-bottom: 1.5em;
+        }
+
+        img {
+            width: 10%;
+            height: auto;
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        .img2 {
+            width: 80%;
+            height: auto;
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        .img3 {
+            width: 50%;
+            height: auto;
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        .img4 {
+            width: 20%;
+            height: auto;
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        /* Apply styles to images and video to make them line up */
+        .img5, .image-row2 video {
+            width: 33%; /* Make images and video occupy equal space */
+            height: auto; /* Maintain aspect ratio */
+            max-height: 100%; /* Ensure they don't overflow the container */
+            object-fit: cover; /* Cover the container, cropping if necessary */
+        }
+
+        .image-row2 {
+            display: flex; /* Use flexbox for horizontal alignment */
+            align-items: center; /* Align items vertically in the center */
+            justify-content: space-between; /* Distribute space evenly between items */
+            gap: 10px; /* Optional: Space between images and video */
+            width: 100%; /* Full width of the container */
+            height: 100%; /* Optional: Control height if needed */
+        }
+
+        /*.img5 {*/
+        /*    width: 50%; !* Set the width to fill the entire container *!*/
+        /*    height: auto; !* Set the height to fill the entire container *!*/
+        /*     !* Scale the image to cover the container, cropping if necessary *!*/
+        /*    flex: 1;*/
+        /*}*/
+
+        .collapsible {
+            background-color: #111111;
+            color: grey;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 12px;
+            margin-bottom: 00px;
+            position: relative;
+        }
+
+        .active, .collapsible:hover {
+            background-color: #464646;
+            color: #ababab;
+        }
+
+        .content {
+            padding: 70px;
+            display: none;
+            overflow: hidden;
+            background-color: #151515;
+        }
+
+        .collapsible::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 1px solid;
+            border-radius: 4px;
+
+        }
+
+        .image-row {
+            display: flex; /* --> this makes the images align horizontally */
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .image-row img {
+            max-width: 20%; /* adjust the width of each image */
+            height: auto; /* confirm --> keeps the aspect ratio */
+            object-fit: contain;
+        }
+
+
+    </style>
+    <!-- mathjax configuration + script -->
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML-full"></script>
+</head>
+<body>
+
+<h1>CS180 Project 2 -- Ryan Nader</h1>
+
+<p>github: https://github.com/berkeleybear22ryan/CS180_Project2</p>
+<p>website: https://berkeleybear22ryan.github.io/CS180_Project2/</p>
+
+<div class="image-row2">
+    <img class="img5" src="./code/images/47.jpeg" alt="Image 2">
+    <img class="img5" src="./code/images/46.jpeg" alt="Image 2">
+    <video src="./code/video/tattoo_reveal_animation.mp4" autoplay loop muted playsinline></video>
+</div>
+
+<div class="image-row">
+
+</div>
+
+<button class="collapsible">SANITY CHECK ------- (PART 0) -- done</button>
+<div class="content">
+    <p>This shows the derivative filter is properly catching the edges as I took images with vertical and horizontal
+        lines to see exactly what is happening.</p>
+    <p>From left to right.</p>
+    <p>1_imgg.jpeg</p>
+    <p>2_imgx.jpeg</p>
+    <p>3_imgy.jpeg</p>
+    <p>4_imgxy.jpeg</p>
+    <p>5_imgxy_s.jpeg</p>
+    <p>6_imgxy_bin.jpeg</p>
+    <p>7_imgxy_s_bin.jpeg</p>
+    <div class="image-row">
+        <img src="./code/render/part0/1_imgg.jpeg" alt="Image 1">
+        <img src="./code/render/part0/2_imgx.jpeg" alt="Image 2">
+        <img src="./code/render/part0/3_imgy.jpeg" alt="Image 3">
+        <img src="./code/render/part0/4_imgxy.jpeg" alt="Image 4">
+        <img src="./code/render/part0/5_imgxy_s.jpeg" alt="Image 5">
+        <img src="./code/render/part0/6_imgxy_bin.jpeg" alt="Image 6">
+        <img src="./code/render/part0/7_imgxy_s_bin.jpeg" alt="Image 7">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part0_1/1_imgg.jpeg" alt="Image 1">
+        <img src="./code/render/part0_1/2_imgx.jpeg" alt="Image 2">
+        <img src="./code/render/part0_1/3_imgy.jpeg" alt="Image 3">
+        <img src="./code/render/part0_1/4_imgxy.jpeg" alt="Image 4">
+        <img src="./code/render/part0_1/5_imgxy_s.jpeg" alt="Image 5">
+        <img src="./code/render/part0_1/6_imgxy_bin.jpeg" alt="Image 6">
+        <img src="./code/render/part0_1/7_imgxy_s_bin.jpeg" alt="Image 7">
+    </div>
+
+
+    <pre><code>from utility import *
+
+if __name__ == '__main__':
+    # TODO: all my images should be between 0 and 255 and are 3d no matter if black and white
+    image_number = 12
+    image_path = f"./images/{image_number}.jpeg"
+    output_path = "./render/part0/"
+
+    image = open_image(image_path)
+    print(f"image.shape: {image.shape}")
+    print(image.max(), image.min())
+
+    imgg = convolve_v1(image[:, :, 0], G, mode='same', boundary='symm')
+    imgx = convolve_v1(imgg, D_x, mode='same', boundary='symm')
+    imgy = convolve_v1(imgg, D_y, mode='same', boundary='symm')
+    imgxy = combine_images_gradient_magnitude(imgx, imgy)
+    imgxy_bin = threshold_image(imgxy, 10)
+
+    # shorter way
+    c1 = convolve_v1(G, D_x, mode="full", boundary='fill')
+    c2 = convolve_v1(G, D_y, mode="full", boundary='fill')
+    imgx_s = convolve_v1(image[:, :, 0], c1, mode='same', boundary='symm')
+    imgy_s = convolve_v1(image[:, :, 0], c2, mode='same', boundary='symm')
+    imgxy_s = combine_images_gradient_magnitude(imgx_s, imgy_s)
+    imgxy_s_bin = threshold_image(imgxy_s, 10)
+
+    save_image(output_path + "1_imgg.jpeg", imgg)
+    save_image(output_path + "2_imgx.jpeg", imgx)
+    save_image(output_path + "3_imgy.jpeg", imgy)
+    save_image(output_path + "4_imgxy.jpeg", imgxy)
+    save_image(output_path + "5_imgxy_s.jpeg", imgxy_s)
+    save_image(output_path + "6_imgxy_bin.jpeg", imgxy_bin)
+    save_image(output_path + "7_imgxy_s_bin.jpeg", imgxy_s_bin)
+</code></pre>
+
+
+</div>
+
+<button class="collapsible">Part 1.1 ------- (PART 1) -- done</button>
+<div class="content">
+
+    <div class="image-row">
+        <img src="./code/images/1.jpeg" alt="Image 1">
+        <img src="./code/render/part1/convolved_F1.jpeg" alt="Image 2">
+        <img src="./code/render/part1/convolved_F2.jpeg" alt="Image 3">
+        <img src="./code/render/part1/gradient_magnitude.jpeg" alt="Image 4">
+        <img src="./code/render/part1/binary_edge_map.jpeg" alt="Image 5">
+    </div>
+
+    <h3>1.1 Finite Difference Operator</h3>
+    <p>The code for this is in n1.py.</p>
+    <p>We will begin by using the finite difference operators as our filters in the x and y directions. These filters
+        are
+        defined as follows:
+        $ \mathbf{D}_{\mathbf{x}} = F_1 = \left[\begin{array}{ll}1 & -1\end{array}\right] $
+        and
+        $ \mathbf{D}_{\mathbf{y}} = F_2 = \left[\begin{array}{c}1 \\ -1\end{array}\right] $.
+    </p>
+
+    <p>First, we show the partial derivative in the x and y directions of the image by convolving the image with finite
+        difference operators $ F_1 $ and $ F_2 $ using the <code>convolve2d</code> function from the
+        <code>scipy.signal</code> library. Then, we compute the gradient magnitude image. To turn this into an edge
+        image,
+        we binarize the gradient magnitude image by picking an appropriate threshold value, trying to suppress the noise
+        while showing all the real edges.</p>
+
+
+    <div class="box">
+        <img src="./code/images/1.jpeg" alt="Original Image">
+        <p>Original grayscale image used for the processing pipeline.</p>
+    </div>
+
+
+    <div class="box">
+        <img src="./code/render/part1/convolved_F1.jpeg" alt="Convolved Image with F1">
+        <p>This image represents the vertical edges detected using the filter $ F_1 $ (horizontal difference operator),
+            which
+            calculates the difference between the pixel and its left neighbor.</p>
+        <p>Convolution operation:
+            $ I_{x}(i, j) = I(i, j) \times 1 + I(i, j - 1) \times (-1) = I(i, j) - I(i, j - 1) $.
+        </p>
+    </div>
+
+    <div class="box">
+        <img src="./code/render/part1/convolved_F2.jpeg" alt="Convolved Image with F2">
+        <p>This image represents the horizontal edges detected using the filter $ F_2 $ (vertical difference operator),
+            which
+            calculates the difference between the pixel and its upper neighbor.</p>
+        <p>Convolution operation:
+            $ I_{y}(i, j) = I(i, j) \times 1 + I(i - 1, j) \times (-1) = I(i, j) - I(i - 1, j) $.
+        </p>
+    </div>
+
+
+    <div class="box">
+        <img src="./code/render/part1/gradient_magnitude.jpeg" alt="Gradient Magnitude Image">
+        <p>The gradient magnitude combines both horizontal and vertical gradients to represent the overall edge strength
+            at each
+            pixel.</p>
+        <p>Gradient magnitude calculation:
+            $ |\nabla I|(i, j) = \sqrt{I_{x}^2(i, j) + I_{y}^2(i, j)} $.
+        </p>
+    </div>
+
+
+    <div class="box">
+        <img src="./code/render/part1/binary_edge_map.jpeg" alt="Binary Edge Map">
+        <p>This binary edge map is obtained by applying a threshold (with a value of 75) to the gradient magnitude
+            image. Pixels with gradient
+            magnitude greater than the threshold are considered edges.</p>
+        <p>Thresholding operation:
+            $ I_{I?F?,T=?}(i, j) = \begin{cases}
+            1 & \text{if } |\nabla I|(i, j) > T \\
+            0 & \text{otherwise}
+            \end{cases} $.
+        </p>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>In this part, we demonstrated the use of finite difference operators to detect edges in images. By computing the
+        horizontal and vertical derivatives, and then combining them to obtain the gradient magnitude, we successfully
+        identified the edges in the image. The binary edge map highlights the edges by thresholding the gradient
+        magnitude
+        image.</p>
+</div>
+
+<button class="collapsible">Part 1.2 ------- (PART 2) -- done</button>
+<div class="content">
+
+    <div class="image-row">
+        <img src="./code/render/part2/1_imgg.jpeg" alt="Image 1">
+        <img src="./code/render/part2/2_imgx.jpeg" alt="Image 2">
+        <img src="./code/render/part2/3_imgy.jpeg" alt="Image 3">
+        <img src="./code/render/part2/4_imgxy.jpeg" alt="Image 4">
+        <img src="./code/render/part2/5_imgxy_s.jpeg" alt="Image 5">
+        <img src="./code/render/part2/6_imgxy_bin.jpeg" alt="Image 6">
+        <img src="./code/render/part2/7_imgxy_s_bin.jpeg" alt="Image 7">
+    </div>
+    <div class="box">
+        <p>Questions</p>
+        <p>What differences do you see?</p>
+        <p>The resulting image appears smoother compared to the original.</p>
+        <p>High-frequency noise will be reduced, making edges more prominent and stable for further processing.</p>
+        <p>Compared to the results from Part 1.1, the edges detected in the smoothed image should be less noisy and more
+            continuous.</p>
+        <p>Less noise-induced artifacts are present compared to the unblurred image.</p>
+        <p>Verify that you get the same result as before. Yes I do!</p>
+    </div>
+
+    <h3>1.2 Derivative of Gaussian (DoG) Filter</h3>
+    <p>The code for this is in n2.py.</p>
+    <p>Objective: To reduce the noise in the image and make the edges more distinguishable.</p>
+    <p> 2D Gaussian filter \( G(x, y) \) is defined as: $G(x, y) = \frac{1}{2\pi\sigma^2} e^{-\frac{x^2 +
+        y^2}{2\sigma^2}}$</p>
+    <div class="box">
+        <img src="./code/render/part2/1_imgg.jpeg" alt="Image 1">
+        <p>This is the image with the gaussian filter. The result is a smoothed version of the original grayscale
+            image.</p>
+    </div>
+
+    <div class="box">
+        <img src="./code/render/part2/2_imgx.jpeg" alt="Image 2">
+        <p>This image (`imgx`) is obtained by convolving the `imgg` image (output from step 1) with the filter
+            `D_x`.</p>
+        <p>`imgx = convolve_v1(imgg, D_x, mode='same', boundary='symm')`</p>
+        <p>The result represents the gradient of the smoothed image `imgg` in the x-direction. It highlights changes in
+            intensity along the horizontal axis, often used to detect vertical edges.</p>
+    </div>
+
+    <div class="box">
+        <img src="./code/render/part2/3_imgy.jpeg" alt="Image 3">
+        <p>This image (`imgy`) is obtained by convolving the `imgg` image with the filter `D_y`.</p>
+        <p>`imgy = convolve_v1(imgg, D_y, mode='same', boundary='symm')`</p>
+        <p>The result represents the gradient of the smoothed image `imgg` in the y-direction. It highlights changes in
+            intensity along the vertical axis, often used to detect horizontal edges.</p>
+    </div>
+
+    <div class="box">
+        <img src="./code/render/part2/4_imgxy.jpeg" alt="Image 4">
+        <p>This image (`imgxy`) is obtained by combining the gradients `imgx` and `imgy` using the function
+            `combine_images_gradient_magnitude`.</p>
+        <p>`imgxy = combine_images_gradient_magnitude(imgx, imgy)`</p>
+        <p>This is a gradient magnitude image that combines the x and y gradients. It shows the overall strength of the
+            edges regardless of their direction, often visualized as edge intensity.</p>
+    </div>
+
+    <div class="box">
+        <img src="./code/render/part2/5_imgxy_s.jpeg" alt="Image 5">
+        <p>This image (`imgxy_s`) is obtained by convolving the first channel of the input image with the combined
+            filters `c1` and `c2` (which themselves are convolutions of `G` with `D_x` and `D_y` respectively).</p>
+        <p>`imgx_s = convolve_v1(image[:, :, 0], c1, mode='same', boundary='symm')` and `imgy_s = convolve_v1(image[:,
+            :, 0], c2, mode='same', boundary='symm')`</p>
+        <p>`imgxy_s = combine_images_gradient_magnitude(imgx_s, imgy_s)`</p>
+        <p>This image represents a more complex combination of convolutions, which might enhance certain features of the
+            image based on the combined filters `c1` and `c2`. It shows a different gradient magnitude compared to
+            `imgxy` and is the shorter way to get to the image.</p>
+    </div>
+    <div class="box">
+        <img src="./code/render/part2/6_imgxy_bin.jpeg" alt="Image 6">
+        <p>This image (`imgxy_bin`) is obtained by applying a threshold to the `imgxy` image.</p>
+        <p>`imgxy_bin = threshold_image(imgxy, 10)`</p>
+        <p>This is a binary image created from the gradient magnitude `imgxy` using a threshold of 10. Pixels with
+            gradient values greater than 10 are set to 255 (white), and those less than or equal to 10 are set to 0
+            (black). It highlights strong edges while ignoring weaker ones.</p>
+
+
+    </div>
+    <div class="box">
+        <img src="./code/render/part2/7_imgxy_s_bin.jpeg" alt="Image 7">
+        <p>This image (`imgxy_s_bin`) is obtained by applying a threshold to the `imgxy_s` image.</p>
+        <p>`imgxy_s_bin = threshold_image(imgxy_s, 10)`</p>
+        </p>Similar to `6_imgxy_bin.jpeg`, but applied to the `imgxy_s` image. It represents a binary image created from
+        the `imgxy_s` gradient magnitude image using the same threshold of 10. It highlights strong edges in the
+        `imgxy_s` gradient map.
+    </div>
+
+</div>
+
+<button class="collapsible">Part 2.1 ------- (PART 3) -- done</button>
+<div class="content">
+    <p>The code for this is in n3.py</p>
+    <p>
+        The first image is the blurred version created by applying a Gaussian filter, which removes high-frequency
+        details and smooths the image. The second image shows the blurred image after applying unsharp masking, which
+        enhances the sharpness but does not fully restore the original details. The third image is the original
+        unprocessed image, containing all the original sharpness and details. The fourth image is the result of applying
+        unsharp masking directly to the original image, showing enhanced sharpness and emphasized high-frequency
+        details.
+    </p>
+
+
+    <div class="image-row">
+        <img src="./code/render/part3_8/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_8/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_8/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_8/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_1/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_1/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_1/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_1/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_2/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_2/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_2/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_2/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_3/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_3/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_3/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_3/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_4/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_4/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_4/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_4/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_5/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_5/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_5/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_5/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_6/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_6/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_6/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_6/sharpened.jpeg" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part3_7/blurred.jpeg" alt="Image 1">
+        <img src="./code/render/part3_7/blurred_then_sharpened.jpeg" alt="Image 2">
+        <img src="./code/render/part3_7/original.jpeg" alt="Image 3">
+        <img src="./code/render/part3_7/sharpened.jpeg" alt="Image 4">
+    </div>
+
+
+</div>
+
+<button class="collapsible">Part 2.2 ------- (PART 4) -- done + Little Bells & Whistles (Color)</button>
+<div class="content">
+    <p>code for this is in n4.py, also note due to user input requirement for alignment you need to run this on
+        terminal</p>
+    <div class="box">
+        <p>Note: I tried to make the images all clear based on distance but in general you should open them up in a new
+            tab and move between right up to the screen and 2-8 feet away depends on the image, but they all worked
+            based on my display.</p>
+        <p>All images are high resolution as well so there should be no issue opening in a new tab.</p>
+        <p>I also put a lot of time into doing color images and would like the credit for it; however, i found that most
+            of the time the black and white looked better as the blend was more natural and due to the overal less
+            detail it make the images feel more similar and harder for the eye to distinguish.</p>
+        <p>QUESTION: Using color for the low-frequency component typically works better for enhancing the hybrid image
+            effect because it Enhances the perception of the "far" image in the hybrid but in images with lots of
+            different colors blending specific parts that are distinct would probably be even better because the further
+            away colors can ruin the close up view. This also ties in with the idea that color in the high frequency can
+            be distracting and may interfere with the fine details.</p>
+        <p>By using color in the low-frequency component, you maintain the natural color perception for the "far" view
+            while allowing the high-frequency details to create the sharp, detailed "near" view without color
+            interference.</p>
+        <p>all but the text used `sigma1 = 20`, `sigma2 = 10`, and `blend_ratio = 0.5`</p>
+        <p>text used `sigma1 = 10`, `sigma2 = 3`, and `blend_ratio = 0.5`</p>
+        <p>Also note that some of the images could be tuned better, but that would require futher testing, trial and
+            error as well as a stronger method to align them and balance the frequencies, so I decided to leave it.</p>
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part4/original_image1.png" alt="Image 1">
+        <img src="./code/render/part4/original_image2.png" alt="Image 2">
+        <img src="./code/render/part4/hybrid_image_rotated.png" alt="Image 3">
+        <img src="./code/render/part4/hybrid_image_rotated_bw.png" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part4_1/original_image1.png" alt="Image 5">
+        <img src="./code/render/part4_1/original_image2.png" alt="Image 6">
+        <img src="./code/render/part4_1/hybrid_image_rotated.png" alt="Image 7">
+        <img src="./code/render/part4_1/hybrid_image_rotated_bw.png" alt="Image 8">
+    </div>
+    <p>Switched order thought it would be interesting to see, this is my failure one.</p>
+    <div class="image-row">
+        <img src="./code/render/part4_5/original_image1.png" alt="Image 5">
+        <img src="./code/render/part4_5/original_image2.png" alt="Image 6">
+        <img src="./code/render/part4_5/hybrid_image_rotated.png" alt="Image 7">
+        <img src="./code/render/part4_5/hybrid_image_rotated_bw.png" alt="Image 8">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part4_2/original_image1.png" alt="Image 1">
+        <img src="./code/render/part4_2/original_image2.png" alt="Image 2">
+        <img src="./code/render/part4_2/hybrid_image_rotated.png" alt="Image 3">
+        <img src="./code/render/part4_2/hybrid_image_rotated_bw.png" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part4_3/original_image1.png" alt="Image 1">
+        <img src="./code/render/part4_3/original_image2.png" alt="Image 2">
+        <img src="./code/render/part4_3/hybrid_image_rotated.png" alt="Image 3">
+        <img src="./code/render/part4_3/hybrid_image_rotated_bw.png" alt="Image 4">
+    </div>
+
+    <div class="image-row">
+        <img src="./code/render/part4_4/original_image1.png" alt="Image 1">
+        <img src="./code/render/part4_4/original_image2.png" alt="Image 2">
+        <img src="./code/render/part4_4/hybrid_image_rotated.png" alt="Image 3">
+        <img src="./code/render/part4_4/hybrid_image_rotated_bw.png" alt="Image 4">
+    </div>
+
+
+    <div class="box">
+        <p>Here is a walkthrough with all the iterations I worked with for a single result.</p>
+        <p>first I started with the following images</p>
+        <img src="./code/render/part4_4/original_image1.png" alt="Image 1">
+        <img src="./code/render/part4_4/original_image2.png" alt="Image 2">
+        <p>then I make sure to align them using the starter coder and clicking the center of there eyes as that was good
+            reference based on front on shot</p>
+        <img src="./code/render/part4_4/aligned_image1.png" alt="Image 1">
+        <img src="./code/render/part4_4/aligned_image2.png" alt="Image 2">
+        <p>then after it was lined up I rotated it back based on the input image 1</p>
+        <img class="img2" src="./code/render/part4_4/scale_space.png" alt="Image 1">
+        <img class="img2" src="./code/render/part4_4/Laplacian_Pyramid.png" alt="Image 2">
+        <p>and for this image here is the associated data ... in the order the two input images, the filtered (low then
+            high) images, and the hybrid image</p>
+        <img class="img3" src="./code/render/part4_4/frequency_analysis_Input_Image_1.png" alt="Image 1">
+        <img class="img3" src="./code/render/part4_4/frequency_analysis_Input_Image_2.png" alt="Image 2">
+        <img class="img3" src="./code/render/part4_4/Low_Frequency_Image_FFT_Filtered.png" alt="Image 1">
+        <img class="img3" src="./code/render/part4_4/High_Frequency_Image_FFT_Filtered.png" alt="Image 2">
+        <img class="img3" src="./code/render/part4_4/frequency_analysis_Hybrid_Image.png" alt="Image 2">
+        <img class="img3" src="./code/render/part4_4/Hybrid_Image_FFT.png" alt="Image 2">
+        <p>then the final images are ... in black and white and color</p>
+        <img class="img4" src="./code/render/part4_4/hybrid_image_rotated.png" alt="Image 3">
+        <img class="img4" src="./code/render/part4_4/hybrid_image_rotated_bw.png" alt="Image 4">
+    </div>
+
+    <div class="box">
+        <p>these are too high resolution and thus to look proper you have to be far away but ones that look good at this
+            size are ... please stand around 10 feet away to see it work!</p>
+        <img class="img3" src="./code/render/part4_2/hybrid_image_rotated.png" alt="Image 3">
+        <img class="img3" src="./code/render/part4_2/hybrid_image_rotated_bw.png" alt="Image 4">
+    </div>
+
+    <div class="box">
+        <p>Here is the elon to mark transition ...</p>
+        <img class="img2" src="./code/render/part4_3/Gaussian_Pyramid.png" alt="Image 3">
+        <img class="img2" src="./code/render/part4_3/Laplacian_Pyramid.png" alt="Image 3">
+        <img class="img2" src="./code/render/part4_3/scale_space.png" alt="Image 3">
+    </div>
+
+</div>
+
+<button class="collapsible">Part 2.3 ------- (PART 5) -- done</button>
+<div class="content">
+    <p>The code for this part is in n5.py.</p>
+    <div class="box">
+        <p>here is the gaussian stack for my level 10 stack for the orange</p>
+        <div class="image-row">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_8.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_7.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_6.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_4.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_3.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_2.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_1.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/apple_gaussian_level_0.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="box">
+        <p>here is the gaussian stack for my level 10 stack for the apple</p>
+        <div class="image-row">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_8.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_7.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_6.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_4.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_3.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_2.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_1.png" alt="Image 1">
+            <img src="./code/render/part5/gaussian_stack/orange_gaussian_level_0.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="box">
+        <p>here is the laplacian stack for my level 10 stack for the orange</p>
+        <div class="image-row">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_8.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_7.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_6.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_4.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_3.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_2.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_1.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/apple_laplacian_level_0.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="box">
+        <p>here is the laplacian stack for my level 10 stack for the apple</p>
+        <div class="image-row">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_8.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_7.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_6.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_4.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_3.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_2.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_1.png" alt="Image 1">
+            <img src="./code/render/part5/laplacian_stack/orange_laplacian_level_0.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="box">
+        <p>here is the blended laplacian stack for my level 10 stack for the apple and orange</p>
+        <div class="image-row">
+            <img src="./code/render/part5/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_8.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_7.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_6.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_4.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_3.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_2.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_1.png" alt="Image 1">
+            <img src="./code/render/part5/blended_laplacian_level_0.png" alt="Image 1">
+        </div>
+    </div>
+    <div class="box">
+        <p>here is the final blended apple and orange</p>
+        <img class="img4" src="./code/render/part5/blended_image.png" alt="Image 1">
+    </div>
+</div>
+
+
+<button class="collapsible">Part 2.4 ------- (PART 5) -- done + Bells & Whistles (Blending)</button>
+<div class="content">
+    <div class="box">
+        <p>this is the mask with the guassian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6/mask_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6/mask_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6/mask_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6/mask_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6/mask_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6/mask_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6/mask_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6/mask_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6/mask_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6/mask_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6/img2_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6/img2_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6/img2_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6/img2_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6/img2_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6/img2_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6/img2_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6/img2_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6/img2_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6/img2_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6/img2_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6/img2_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6/img2_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6/img2_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6/img2_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6/img2_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6/img2_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6/img2_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6/img2_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6/img2_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6/img1_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6/img1_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6/img1_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6/img1_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6/img1_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6/img1_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6/img1_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6/img1_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6/img1_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6/img1_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6/img1_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6/img1_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6/img1_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6/img1_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6/img1_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6/img1_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6/img1_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6/img1_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6/img1_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6/img1_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the blended img1 and img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6/blended_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6/blended_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6/blended_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6/blended_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6/blended_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6/blended_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6/blended_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6/blended_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the full mask next to the final blended result.</p>
+        <div class="image-row">
+            <img class="img4" src="./code/render/part6/mask.png" alt="Image 1">
+            <img class="img4" src="./code/render/part6/blended_image.png" alt="Image 2">
+        </div>
+    </div>
+
+    <div class="box">
+        <p>this is the mask with the guassian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_1/mask_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_1/mask_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_1/mask_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_1/mask_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_1/mask_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_1/mask_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_1/mask_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_1/mask_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_1/mask_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_1/mask_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_1/img2_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_1/img2_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_1/img2_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_1/img2_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_1/img2_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_1/img2_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_1/img2_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_1/img2_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_1/img2_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_1/img2_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_1/img2_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_1/img2_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_1/img2_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_1/img2_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_1/img2_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_1/img2_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_1/img2_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_1/img2_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_1/img2_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_1/img2_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_1/img1_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_1/img1_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_1/img1_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_1/img1_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_1/img1_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_1/img1_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_1/img1_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_1/img1_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_1/img1_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_1/img1_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_1/img1_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_1/img1_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_1/img1_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_1/img1_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_1/img1_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_1/img1_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_1/img1_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_1/img1_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_1/img1_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_1/img1_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the blended img1 and img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_1/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_1/blended_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_1/blended_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_1/blended_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_1/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_1/blended_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_1/blended_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_1/blended_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_1/blended_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_1/blended_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the full mask next to the final blended result.</p>
+        <div class="image-row">
+            <img class="img4" src="./code/render/part6_1/mask.png" alt="Image 1">
+            <img class="img4" src="./code/render/part6_1/blended_image.png" alt="Image 2">
+        </div>
+    </div>
+
+
+    <div class="box">
+        <p>this is the mask with the guassian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_2/mask_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_2/mask_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_2/mask_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_2/mask_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_2/mask_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_2/mask_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_2/mask_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_2/mask_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_2/mask_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_2/mask_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_2/img2_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_2/img2_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_2/img2_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_2/img2_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_2/img2_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_2/img2_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_2/img2_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_2/img2_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_2/img2_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_2/img2_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_2/img2_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_2/img2_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_2/img2_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_2/img2_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_2/img2_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_2/img2_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_2/img2_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_2/img2_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_2/img2_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_2/img2_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_2/img1_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_2/img1_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_2/img1_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_2/img1_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_2/img1_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_2/img1_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_2/img1_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_2/img1_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_2/img1_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_2/img1_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_2/img1_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_2/img1_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_2/img1_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_2/img1_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_2/img1_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_2/img1_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_2/img1_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_2/img1_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_2/img1_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_2/img1_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the blended img1 and img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_2/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_2/blended_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_2/blended_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_2/blended_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_2/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_2/blended_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_2/blended_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_2/blended_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_2/blended_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_2/blended_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the full mask next to the final blended result.</p>
+        <div class="image-row">
+            <img class="img4" src="./code/render/part6_2/mask.png" alt="Image 1">
+            <img class="img4" src="./code/render/part6_2/blended_image.png" alt="Image 2">
+        </div>
+    </div>
+
+    <div class="box">
+        <p>this is the mask with the guassian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_3/mask_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_3/mask_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_3/mask_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_3/mask_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_3/mask_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_3/mask_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_3/mask_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_3/mask_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_3/mask_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_3/mask_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_3/img2_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_3/img2_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_3/img2_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_3/img2_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_3/img2_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_3/img2_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_3/img2_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_3/img2_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_3/img2_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_3/img2_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_3/img2_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_3/img2_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_3/img2_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_3/img2_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_3/img2_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_3/img2_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_3/img2_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_3/img2_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_3/img2_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_3/img2_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_3/img1_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_3/img1_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_3/img1_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_3/img1_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_3/img1_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_3/img1_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_3/img1_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_3/img1_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_3/img1_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_3/img1_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_3/img1_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_3/img1_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_3/img1_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_3/img1_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_3/img1_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_3/img1_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_3/img1_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_3/img1_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_3/img1_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_3/img1_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the blended img1 and img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_3/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_3/blended_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_3/blended_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_3/blended_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_3/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_3/blended_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_3/blended_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_3/blended_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_3/blended_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_3/blended_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the full mask next to the final blended result.</p>
+        <div class="image-row">
+            <img class="img4" src="./code/render/part6_3/mask.png" alt="Image 1">
+            <img class="img4" src="./code/render/part6_3/blended_image.png" alt="Image 2">
+        </div>
+
+
+        <p>now for extra credit I was able to make it even better than simple filter with the following idea.</p>
+        <p>I have code function `generate_refined_tattoo_mask` that with tuned line detection was able to map the tattoo
+            area the apply guassian to make it softer. Here are the results.</p>
+        <div class="box">
+            <p>here we have the two original images</p>
+            <div class="image-row">
+                <img class="img3" src="./code/images/46.jpeg" alt="Image 1">
+                <img class="img3" src="./code/images/47.jpeg" alt="Image 1">
+            </div>
+        </div>
+
+        <div class="box">
+            <p>here we have the trivial filter that you could do by hand in photoshop</p>
+            <div class="image-row">
+                <img class="img3" src="./code/render/part6_3/mask.png" alt="Image 2">
+                <img class="img3" src="./code/render/part6_3/blended_image.png" alt="Image 2">
+            </div>
+        </div>
+
+        <div class="box">
+            <p>here we have the sobel/canny filter with gaussian at low darkness</p>
+            <div class="image-row">
+                <img class="img3" src="./code/render/part6_8/mask.png" alt="Image 2">
+                <img class="img3" src="./code/render/part6_8/blended_image.png" alt="Image 2">
+            </div>
+        </div>
+
+        <div class="box">
+            <p>here we have the sobel/canny filter with gaussian at medium darkness</p>
+            <div class="image-row">
+                <img class="img3" src="./code/render/part6_6/mask.png" alt="Image 2">
+                <img class="img3" src="./code/render/part6_6/blended_image.png" alt="Image 2">
+            </div>
+        </div>
+
+        <div class="box">
+            <p>here we have the sobel/canny filter with gaussian at high darkness</p>
+            <div class="image-row">
+                <img class="img3" src="./code/render/part6_7/mask.png" alt="Image 2">
+                <img class="img3" src="./code/render/part6_7/blended_image.png" alt="Image 2">
+            </div>
+        </div>
+
+        <div class="box">
+            <p>important to note that I also had to clean the filters throughout the process</p>
+            <div class="image-row">
+                <img class="img3" src="./code/render/noise_mask.png" alt="Image 2">
+                <img class="img3" src="./code/render/part6_7/mask.png" alt="Image 2">
+            </div>
+        </div>
+
+        <p>from this you can see that as I make it darker the tattto look better but then he shares issue with the
+            womens skin ton not matching his, so it is a balance game, I like the medium darkness one the best!</p>
+        <p>Also it is worth noting that I decided not to scale or rotate but this could easily be done so that the
+            entire tattoo fits on his neck and has similiar size.</p>
+        <img class="img2" src="./code/images/46.jpeg" alt="Image 1">
+        <img class="img2" src="./code/images/47.jpeg" alt="Image 1">
+        <img class="img2" src="./code/render/part6_6/blended_image.png" alt="Image 2">
+    </div>
+
+
+    <div class="box">
+        <p>this is the mask with the guassian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_4/mask_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_4/mask_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_4/mask_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_4/mask_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_4/mask_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_4/mask_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_4/mask_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_4/mask_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_4/mask_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_4/mask_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_4/img2_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_4/img2_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_4/img2_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_4/img2_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_4/img2_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_4/img2_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_4/img2_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_4/img2_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_4/img2_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_4/img2_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_4/img2_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_4/img2_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_4/img2_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_4/img2_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_4/img2_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_4/img2_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_4/img2_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_4/img2_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_4/img2_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_4/img2_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_4/img1_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_4/img1_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_4/img1_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_4/img1_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_4/img1_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_4/img1_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_4/img1_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_4/img1_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_4/img1_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_4/img1_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_4/img1_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_4/img1_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_4/img1_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_4/img1_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_4/img1_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_4/img1_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_4/img1_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_4/img1_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_4/img1_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_4/img1_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the blended img1 and img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_4/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_4/blended_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_4/blended_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_4/blended_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_4/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_4/blended_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_4/blended_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_4/blended_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_4/blended_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_4/blended_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the full mask next to the final blended result.</p>
+        <div class="image-row">
+            <img class="img4" src="./code/render/part6_4/mask.png" alt="Image 1">
+            <img class="img4" src="./code/render/part6_4/blended_image.png" alt="Image 2">
+        </div>
+    </div>
+
+    <div class="box">
+        <p>this is the mask with the guassian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_5/mask_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_5/mask_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_5/mask_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_5/mask_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_5/mask_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_5/mask_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_5/mask_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_5/mask_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_5/mask_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_5/mask_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_5/img2_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_5/img2_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_5/img2_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_5/img2_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_5/img2_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_5/img2_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_5/img2_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_5/img2_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_5/img2_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_5/img2_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img2 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_5/img2_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_5/img2_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_5/img2_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_5/img2_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_5/img2_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_5/img2_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_5/img2_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_5/img2_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_5/img2_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_5/img2_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_5/img1_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_5/img1_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_5/img1_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_5/img1_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_5/img1_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_5/img1_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_5/img1_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_5/img1_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_5/img1_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_5/img1_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the img1 with the gaussian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_5/img1_gaussian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_5/img1_gaussian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_5/img1_gaussian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_5/img1_gaussian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_5/img1_gaussian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_5/img1_gaussian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_5/img1_gaussian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_5/img1_gaussian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_5/img1_gaussian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_5/img1_gaussian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the blended img1 and img2 with the laplacian applied at different resolutions.</p>
+        <div class="image-row">
+            <img src="./code/render/part6_5/blended_laplacian_level_9.png" alt="Image 1">
+            <img src="./code/render/part6_5/blended_laplacian_level_8.png" alt="Image 2">
+            <img src="./code/render/part6_5/blended_laplacian_level_7.png" alt="Image 3">
+            <img src="./code/render/part6_5/blended_laplacian_level_6.png" alt="Image 4">
+            <img src="./code/render/part6_5/blended_laplacian_level_5.png" alt="Image 1">
+            <img src="./code/render/part6_5/blended_laplacian_level_4.png" alt="Image 2">
+            <img src="./code/render/part6_5/blended_laplacian_level_3.png" alt="Image 3">
+            <img src="./code/render/part6_5/blended_laplacian_level_2.png" alt="Image 4">
+            <img src="./code/render/part6_5/blended_laplacian_level_1.png" alt="Image 3">
+            <img src="./code/render/part6_5/blended_laplacian_level_0.png" alt="Image 4">
+        </div>
+
+        <p>this is the full mask next to the final blended result.</p>
+        <div class="image-row">
+            <img class="img4" src="./code/render/part6_5/mask.png" alt="Image 1">
+            <img class="img4" src="./code/render/part6_5/blended_image.png" alt="Image 2">
+        </div>
+    </div>
+
+
+</div>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
+
+<!--this is for the code look when using ``-->
+<script>
+    // this is the javaScript to replace backtick-wrapped text with a <code> tag
+    document.addEventListener("DOMContentLoaded", function () {
+        // ---> select all paragraphs
+        const paragraphs = document.querySelectorAll("p");
+
+        paragraphs.forEach(paragraph => {
+            // now ... replace backtick wrapped text with a <code> element
+            paragraph.innerHTML = paragraph.innerHTML.replace(/`([^`]+)`/g, function (match, p1) {
+                return `<code>${p1}</code>`;
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
